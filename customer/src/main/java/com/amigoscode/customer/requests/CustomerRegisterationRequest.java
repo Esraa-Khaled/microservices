@@ -1,7 +1,5 @@
 package com.amigoscode.customer.requests;
 
-import java.util.Objects;
-
 public class CustomerRegisterationRequest {
     private String firstName;
     private String lastName;
