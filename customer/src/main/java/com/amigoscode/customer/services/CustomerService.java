@@ -2,6 +2,8 @@ package com.amigoscode.customer.services;
 
 import com.amigoscode.clients.fraud.FraudCheckResponse;
 import com.amigoscode.clients.fraud.FraudClient;
+import com.amigoscode.clients.notification.NotificationClient;
+import com.amigoscode.clients.notification.NotificationRequest;
 import com.amigoscode.customer.dtos.Customer;
 import com.amigoscode.customer.repositories.CustomerRepository;
 import com.amigoscode.customer.requests.CustomerRegisterationRequest;
@@ -16,9 +18,10 @@ public class CustomerService {
     CustomerRepository customerRepository;
     @Autowired
     RestTemplate restTemplate;
-
     @Autowired
     FraudClient fraudClient;
+    @Autowired
+    NotificationClient notificationClient;
 
     public void registerCustomer(CustomerRegisterationRequest request) {
         Customer customer = Customer.builder()
@@ -30,17 +33,18 @@ public class CustomerService {
         // TODO: check if email not taken
         customerRepository.saveAndFlush(customer);
 
-        //check if fraudster
-//        FraudCheckResponse fraudCheckResponse = restTemplate.getForObject(
-//                "http://FRAUD/api/v1/fraud-check/{customerId}",
-//                FraudCheckResponse.class,
-//                customer.getId()
-//        );
-
+        // TODO: check if fraudster
         FraudCheckResponse fraudCheckResponse = fraudClient.isFraudster(customer.getId());
         if(fraudCheckResponse != null && fraudCheckResponse.isFraudster()) {
             throw new IllegalStateException("Fraudster");
         }
-        // ToDO: send notification
+        // TODO: send notification
+        // TODO: make it async. i.e add to queue
+        NotificationRequest notificationRequest = new NotificationRequest();
+        notificationRequest.setToCustomerId(customer.getId());
+        notificationRequest.setToCustomerEmail(customer.getEmail());
+        notificationRequest.setMessage(String.format("Hi %s, welcome to Amigoscode....", customer.getFirstName()));
+        notificationClient.sendNotification(notificationRequest);
+
     }
 }
