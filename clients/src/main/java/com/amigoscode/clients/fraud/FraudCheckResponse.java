@@ -1,4 +1,4 @@
-package com.amigoscode.fraud.responses;
+package com.amigoscode.clients.fraud;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

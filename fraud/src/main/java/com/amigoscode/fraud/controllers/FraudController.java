@@ -1,6 +1,6 @@
 package com.amigoscode.fraud.controllers;
 
-import com.amigoscode.fraud.responses.FraudCheckResponse;
+import com.amigoscode.clients.fraud.FraudCheckResponse;
 import com.amigoscode.fraud.services.FraudCheckService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

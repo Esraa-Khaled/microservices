@@ -1,9 +1,10 @@
 package com.amigoscode.customer.services;
 
+import com.amigoscode.clients.fraud.FraudCheckResponse;
+import com.amigoscode.clients.fraud.FraudClient;
 import com.amigoscode.customer.dtos.Customer;
 import com.amigoscode.customer.repositories.CustomerRepository;
 import com.amigoscode.customer.requests.CustomerRegisterationRequest;
-import com.amigoscode.customer.responses.FraudCheckResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -16,6 +17,9 @@ public class CustomerService {
     @Autowired
     RestTemplate restTemplate;
 
+    @Autowired
+    FraudClient fraudClient;
+
     public void registerCustomer(CustomerRegisterationRequest request) {
         Customer customer = Customer.builder()
                 .firstName(request.getFirstName())
@@ -27,12 +31,13 @@ public class CustomerService {
         customerRepository.saveAndFlush(customer);
 
         //check if fraudster
-        FraudCheckResponse fraudCheckResponse = restTemplate.getForObject(
-                "http://FRAUD/api/v1/fraud-check/{customerId}",
-                FraudCheckResponse.class,
-                customer.getId()
-        );
+//        FraudCheckResponse fraudCheckResponse = restTemplate.getForObject(
+//                "http://FRAUD/api/v1/fraud-check/{customerId}",
+//                FraudCheckResponse.class,
+//                customer.getId()
+//        );
 
+        FraudCheckResponse fraudCheckResponse = fraudClient.isFraudster(customer.getId());
         if(fraudCheckResponse != null && fraudCheckResponse.isFraudster()) {
             throw new IllegalStateException("Fraudster");
         }
