@@ -73,3 +73,11 @@
     </pluginManagement>
   </build>
 </project>
+
+///
+Distributed Tracking using sleuth Zipkin
+- Trace Id >> unique for request,
+- SpanIs >> differentiate from service to another
+
+Zipkin:: A distributed tracing system used in troubleshoot latency problems
+, include both collection and lookup this data
